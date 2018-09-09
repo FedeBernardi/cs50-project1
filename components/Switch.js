@@ -2,16 +2,23 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Text, View, StyleSheet, Animated, TouchableWithoutFeedback } from 'react-native';
 
+
+/**
+ * It's an animated switch that allows to set a text for both values
+ */
 export default class Switch extends React.Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
-            leftPosition: new Animated.Value(0)
+            leftPosition: new Animated.Value(this.props.value ? 0 : 115)
         };
     }
 
+    /**
+     * It triggers the animation and executes the sent callback
+     */
     onSwitchToggled() {
         Animated.timing(this.state.leftPosition, {
             toValue: this.props.value ? 115 : 0,
@@ -78,8 +85,9 @@ const styles = StyleSheet.create({
 });
 
 Switch.propTypes = {
-    textTrue: PropTypes.string,
-    textFalse: PropTypes.string,
-    callback: PropTypes.func
+    textTrue: PropTypes.string.isRequired,
+    textFalse: PropTypes.string.isRequired,
+    callback: PropTypes.func.isRequired,
+    value: PropTypes.bool.isRequired
 }
 
