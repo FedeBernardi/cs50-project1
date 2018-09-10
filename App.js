@@ -8,15 +8,12 @@ import {
     TouchableNativeFeedback,
     ImageBackground
 } from 'react-native';
-import Switch from './components/Switch';
-import Timer from './components/Timer';
-import Button, {BUTTON_SIZES} from './components/Button';
-
 import { Constants } from 'expo';
 
-const WORKING_TEXT = 'Time to work buddy!',
-      RESTING_TEXT = 'You can relax now :)',
-      DEFAULT_WORK_TIME = 25,
+import EditScreen from './screens/EditScreen';
+import MainScreen from './screens/MainScreen';
+
+const DEFAULT_WORK_TIME = 25,
       DEFAULT_BREAK_TIME = 5;
 
 export default class App extends React.Component {
@@ -29,7 +26,8 @@ export default class App extends React.Component {
             currentTime: {minutes: DEFAULT_WORK_TIME, seconds: 0},
             isTicking: false,
             isWork: true,
-            showMainScreen: true
+            showMainScreen: true,
+            showRemainingTime: true
         }
     }
 
@@ -105,60 +103,6 @@ export default class App extends React.Component {
         }
     }
 
-    renderMainScreen() {
-        let {minutes, seconds} = this.state.currentTime,
-            {isTicking, isWork, workTimer, breakTimer} = this.state;
-
-        return (
-            <View style={styles.mainContainer}>
-                <View style={styles.mainHeader}>
-                    <View style={styles.timersDetailsContainer}>
-                        <Text style={styles.timerDetail}>{`Work:  ${workTimer} minutes`}</Text>
-                        <Text style={styles.timerDetail}>{`Break: ${breakTimer} minutes`}</Text>
-                    </View>
-                    <Button
-                        text={'Edit'}
-                        callback={() => this.screenToggle()}
-                        size={BUTTON_SIZES.SMALL}
-                        background={TouchableNativeFeedback.Ripple()}>
-                    </Button>
-                </View>
-                <View style={styles.mainContent}>
-                    <View style={styles.switcher}>
-                        <Switch
-                            value={isWork}
-                            textTrue='Work'
-                            textFalse='Break'
-                            callback={this.switchToggledCallback.bind(this)}>
-                        </Switch>
-                    </View>
-                    {isTicking && <Text style={styles.mainText}>{isWork ? WORKING_TEXT : RESTING_TEXT}</Text>}
-                    {!isTicking && <Text style={styles.mainText}>Press the button to start the clock!</Text>}
-                    <View>
-                        <Timer minutes={minutes} seconds={seconds} fontSize={60}></Timer>
-                    </View>
-                </View>
-                <View style={styles.mainButtonPanel}>
-                    <View>
-                        <Button
-                            text={isTicking ? 'Stop' : 'Start'}
-                            callback={() => this.timerToggle()}
-                            size={BUTTON_SIZES.MEDIUM}
-                            extraStyles={styles.startButton}>
-                        </Button>
-                    </View>
-                    <View>
-                        <Button
-                            text='Reset'
-                            callback={() => this.resetTimer()}
-                            size={BUTTON_SIZES.MEDIUM}>
-                        </Button>
-                    </View>
-                </View>
-            </View>
-        );
-    }
-
     editInputHandler(value, timer) {
         if (value) {
             if (timer === 'work') {
@@ -169,41 +113,40 @@ export default class App extends React.Component {
         }
     }
 
-    renderEditScreen() {
-        let {workTimer, breakTimer} = this.state;
-
-        return <View>
-            <Text>Edit your timers</Text>
-            <View>
-                <Text>Working time</Text>
-                <TextInput
-                    maxLength={2}
-                    placeholder={workTimer.toString()}
-                    keyboardType='numeric'
-                    onChangeText={(v) => this.editInputHandler(v, 'work')}
-                ></TextInput>
-            </View>
-            <View>
-                <Text>Break time</Text>
-                <TextInput
-                    maxLength={2}
-                    placeholder={breakTimer.toString()}
-                    keyboardType='numeric'
-                    onChangeText={(v) => this.editInputHandler(v, 'break')}
-                ></TextInput>
-            </View>
-            <Button text='Go Back' callback={() => this.screenToggle()}></Button>
-        </View>;
+    checkboxHandler() {
+        this.setState({showRemainingTime: !this.state.showRemainingTime});
     }
 
     render() {
-        let {showMainScreen} = this.state;
+        let {showMainScreen, workTimer, breakTimer, currentTime, isTicking, isWork, showRemainingTime} = this.state;
 
-        return <ImageBackground source={require('./assets/tomatoes.jpg')} style={{width: '100%', height: '100%'}}>
-            <View style={styles.container}>
-                {showMainScreen ? this.renderMainScreen() : this.renderEditScreen()}
+        //return <ImageBackground source={require('./assets/tomatoes.jpg')} style={{width: '100%', height: '100%'}}> 
+        return    <View style={styles.container}>
+                {showMainScreen
+                    ? <MainScreen
+                        currentTime={currentTime}
+                        isTicking={isTicking}
+                        isWork={isWork}
+                        workTimer={workTimer}
+                        breakTimer={breakTimer}
+                        showRemainingTime={showRemainingTime}
+                        screenToggle={this.screenToggle.bind(this)}
+                        switchToggledCallback={this.switchToggledCallback.bind(this)}
+                        timerToggle={this.timerToggle.bind(this)}
+                        resetTimer={this.resetTimer.bind(this)}
+                    />
+                    : <EditScreen 
+                        workTimer={workTimer}
+                        breakTimer={breakTimer}
+                        showRemainingTime={showRemainingTime}
+                        buttonCallback={this.screenToggle.bind(this)}
+                        editHandler={this.editInputHandler.bind(this)}
+                        checkboxHandler={this.checkboxHandler.bind(this)}
+                        
+                    />
+                }
             </View>
-        </ImageBackground>;
+        //</ImageBackground>;
     }
 }
 
@@ -212,47 +155,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-start',
         marginTop: Constants.statusBarHeight,
-        padding: 10
-    },
-    mainHeader: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        height: 150
-    },
-    editButton: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: 30,
-        width: 100,
-        backgroundColor: 'steelblue'
-    },
-    mainContainer: {
-        flex: 1,
-        height: 500
-    },
-    mainContent: {
-        flex: 4,
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    mainText: {
-        fontSize: 20,
-        color: '#FFF'
-    },
-    mainButtonPanel: {
-        flex: 2,
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: 150
-    },
-    startButton: {
-        marginBottom: 20
-    },
-    timersDetailsContainer: {
-        
-    },
-    timerDetail: {
-        color: 'grey'
+        padding: 10,
+        backgroundColor: '#f94a4a'
     }
 });

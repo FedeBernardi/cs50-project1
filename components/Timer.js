@@ -9,12 +9,13 @@ export default class Timer extends React.Component {
     }
 
     render() {
-        let {minutes, seconds, fontSize} = this.props;
+        let {minutes, seconds, fontSize, showTime} = this.props;
 
         return <View style={styles.container}>
             <View style={styles.innerContainer}>
                 <Text style={{fontSize}}>
-                    {this.convertNumber(minutes) +  ':' + this.convertNumber(seconds)}
+                    {showTime && this.convertNumber(minutes) +  ':' + this.convertNumber(seconds)}
+                    {!showTime && '-- : --'}
                 </Text>
             </View>
         </View>;
@@ -44,7 +45,8 @@ const styles = StyleSheet.create({
 });
 
 Timer.propTypes = {
-    minutes: PropTypes.number,
-    seconds: PropTypes.number,
-    fontSize: PropTypes.number
+    minutes: PropTypes.number.isRequired,
+    seconds: PropTypes.number.isRequired,
+    fontSize: PropTypes.number.isRequired,
+    showTime: PropTypes.bool.isRequired
 }
