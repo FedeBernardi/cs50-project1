@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, ImageBackground, StyleSheet } from 'react-native';
 
 export default class Timer extends React.Component {
 
@@ -12,12 +12,14 @@ export default class Timer extends React.Component {
         let {minutes, seconds, fontSize, showTime} = this.props;
 
         return <View style={styles.container}>
-            <View style={styles.innerContainer}>
-                <Text style={{fontSize}}>
-                    {showTime && this.convertNumber(minutes) +  ':' + this.convertNumber(seconds)}
-                    {!showTime && '-- : --'}
-                </Text>
-            </View>
+            <ImageBackground source={require('../assets/tomate.png')} style={{width: '100%', height: '100%'}}>
+                <View style={styles.innerContainer}>
+                    <Text style={{fontSize}}>
+                        {showTime && this.convertNumber(minutes) +  ':' + this.convertNumber(seconds)}
+                        {!showTime && '-- : --'}
+                    </Text>
+                </View>
+            </ImageBackground>
         </View>;
     }
 }
@@ -28,19 +30,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         height: 200,
         width: 200,
-        borderWidth: 10,
-        borderRadius: 100,
-        backgroundColor: 'rgba(255, 255, 255, 0.5)'
+        borderRadius: 100
     },
     innerContainer: {
         justifyContent: 'center',
         alignItems: 'center',
         height: 200,
-        width: 200,
-        borderColor: 'black',
-        borderStyle: 'solid',
-        borderWidth: 10,
-        borderRadius: 100
+        width: 200
     }
 });
 

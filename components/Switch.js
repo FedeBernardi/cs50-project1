@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         width: 250,
         height: 50,
-        backgroundColor: 'red',
+        backgroundColor: '#F8F8EF',
         borderRadius: 20,
         overflow: 'hidden'
     },
@@ -60,9 +60,11 @@ const styles = StyleSheet.create({
         width: 135,
         height: 50,
         position: 'absolute',
-        opacity: 0.5,
-        backgroundColor: 'yellow',
-        borderRadius: 20
+        backgroundColor: '#F5BE96',
+        borderRadius: 20,
+        borderStyle: 'solid',
+        borderColor: '#291226',
+        borderWidth: 2
     },
     selectorOnTrue: {
         top: 0,

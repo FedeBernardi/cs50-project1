@@ -1,10 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 
 import Button, {BUTTON_SIZES} from '../components/Button';
+import ImageButton, {BUTTON_IMAGE_SIZES} from '../components/ImageButton';
 import Switch from '../components/Switch';
 import Timer from '../components/Timer';
+
+import images from '../utils/images';
 
 const WORKING_TEXT = 'Time to work buddy!',
       RESTING_TEXT = 'You can relax now :)';
@@ -32,11 +35,14 @@ export default class MainScreen extends React.Component {
                         <Text style={styles.timerDetail}>{`Work:  ${workTimer} minutes`}</Text>
                         <Text style={styles.timerDetail}>{`Break: ${breakTimer} minutes`}</Text>
                     </View>
-                    <Button
+                    {/* <Button
                         text={'Edit'}
                         callback={screenToggle}
                         size={BUTTON_SIZES.SMALL}
-                    />
+                    /> */}
+                    <TouchableOpacity onPress={screenToggle}>
+                        <Text>Edit</Text>
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.mainContent}>
                     <View style={styles.switcher}>
@@ -56,19 +62,29 @@ export default class MainScreen extends React.Component {
                 </View>
                 <View style={styles.mainButtonPanel}>
                     <View>
-                        <Button
+                        {/* <Button
                             text={isTicking ? 'Stop' : 'Start'}
                             callback={timerToggle}
                             size={BUTTON_SIZES.MEDIUM}
                             extraStyles={styles.startButton}>
-                        </Button>
+                        </Button> */}
+                        <ImageButton
+                            imgSource={images.buttons.start}
+                            size={BUTTON_IMAGE_SIZES.MEDIUM}
+                            callback={timerToggle}
+                        />
                     </View>
                     <View>
-                        <Button
+                        {/* <Button
                             text='Reset'
                             callback={resetTimer}
                             size={BUTTON_SIZES.MEDIUM}>
-                        </Button>
+                        </Button> */}
+                        <ImageButton
+                            imgSource={images.buttons.reset}
+                            size={BUTTON_IMAGE_SIZES.SMALL}
+                            callback={resetTimer}
+                        />
                     </View>
                 </View>
             </View>
