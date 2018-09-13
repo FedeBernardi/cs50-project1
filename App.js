@@ -1,11 +1,8 @@
 import React from 'react';
 import {
     StyleSheet,
-    Text,
     View,
     Vibration,
-    TextInput,
-    TouchableNativeFeedback,
     ImageBackground
 } from 'react-native';
 import { Constants } from 'expo';
@@ -13,9 +10,19 @@ import { Constants } from 'expo';
 import EditScreen from './screens/EditScreen';
 import MainScreen from './screens/MainScreen';
 
-const DEFAULT_WORK_TIME = 25,
+const DEFAULT_WORK_TIME = 0,
       DEFAULT_BREAK_TIME = 5;
 
+/**
+ * workTimer: amount of minutes set for work
+ * breakTimer: amount of minutes set for break,
+ * currentTime
+ * isTicking: determines if the time is running
+ * isWork: flag to know if the current time is work or not
+ * showMainScreen: flag to switch between the main screen and the edir screen
+ * showRemainingTime: config to determines if the remaining time should be displayed
+ * hasFinished: flag to know if the time ran out
+ */
 export default class App extends React.Component {
 
     constructor() {
@@ -23,11 +30,12 @@ export default class App extends React.Component {
         this.state = {
             workTimer: DEFAULT_WORK_TIME,
             breakTimer: DEFAULT_BREAK_TIME,
-            currentTime: {minutes: DEFAULT_WORK_TIME, seconds: 0},
+            currentTime: {minutes: DEFAULT_WORK_TIME, seconds: 5},
             isTicking: false,
             isWork: true,
             showMainScreen: true,
-            showRemainingTime: true
+            showRemainingTime: true,
+            hasFinished: false
         }
     }
 
@@ -43,7 +51,7 @@ export default class App extends React.Component {
     }
 
     kickInterval() {
-        this.interval = setInterval(() => {
+        this.intervalTimer = setInterval(() => {
             let {minutes, seconds} = this.state.currentTime;
             seconds--;
 
@@ -51,18 +59,27 @@ export default class App extends React.Component {
                 seconds = 59;
                 minutes--;
             }
-
+            console.log(seconds);
+            this.setState({currentTime: {minutes, seconds}})
             if (!minutes && !seconds) {
-                Vibration.vibrate();
-                this.switchTimers();
-            } else {
-                this.setState({currentTime: {minutes, seconds}})
+                this.setState({hasFinished: true})
+                this.startVibration();
             }
         }, 1000);
     }
 
+    startVibration() {
+        this.destroyInterval();
+        Vibration.vibrate([500, 500, 500], true);
+    }
+
+    stopVibration() {
+        Vibration.cancel();
+        this.switchTimers();
+    }
+
     destroyInterval() {
-        clearInterval(this.interval);
+        clearInterval(this.intervalTimer);
     }
 
     // Changes from one timer to the other
@@ -70,6 +87,7 @@ export default class App extends React.Component {
         let {workTimer, breakTimer, isWork} = this.state;
 
         this.setState({
+            hasFinished: false,
             isTicking: false,
             isWork: !isWork,
             currentTime: {minutes: !isWork ? workTimer : breakTimer, seconds: 0}
@@ -118,15 +136,25 @@ export default class App extends React.Component {
     }
 
     render() {
-        let {showMainScreen, workTimer, breakTimer, currentTime, isTicking, isWork, showRemainingTime} = this.state;
+        let {
+            showMainScreen,
+            workTimer,
+            breakTimer,
+            currentTime,
+            isTicking,
+            isWork,
+            showRemainingTime,
+            hasFinished
+        } = this.state;
 
-        //return <ImageBackground source={require('./assets/tomatoes.jpg')} style={{width: '100%', height: '100%'}}> 
-        return    <View style={styles.container}>
+        return <ImageBackground source={require('./assets/bg.png')} style={{width: '100%', height: '100%'}}>
+            <View style={styles.container}>
                 {showMainScreen
                     ? <MainScreen
                         currentTime={currentTime}
                         isTicking={isTicking}
                         isWork={isWork}
+                        hasFinished={hasFinished}
                         workTimer={workTimer}
                         breakTimer={breakTimer}
                         showRemainingTime={showRemainingTime}
@@ -134,6 +162,7 @@ export default class App extends React.Component {
                         switchToggledCallback={this.switchToggledCallback.bind(this)}
                         timerToggle={this.timerToggle.bind(this)}
                         resetTimer={this.resetTimer.bind(this)}
+                        stopAlarm={this.stopVibration.bind(this)}
                     />
                     : <EditScreen 
                         workTimer={workTimer}
@@ -146,7 +175,7 @@ export default class App extends React.Component {
                     />
                 }
             </View>
-        //</ImageBackground>;
+        </ImageBackground>;
     }
 }
 
@@ -155,7 +184,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-start',
         marginTop: Constants.statusBarHeight,
-        padding: 10,
-        backgroundColor: '#f94a4a'
+        padding: 10
     }
 });

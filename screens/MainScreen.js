@@ -6,6 +6,7 @@ import Button, {BUTTON_SIZES} from '../components/Button';
 import ImageButton, {BUTTON_IMAGE_SIZES} from '../components/ImageButton';
 import Switch from '../components/Switch';
 import Timer from '../components/Timer';
+import AlarmButton from '../components/AlarmButton';
 
 import images from '../utils/images';
 
@@ -20,12 +21,14 @@ export default class MainScreen extends React.Component {
                 isTicking,
                 isWork,
                 workTimer,
+                hasFinished,
                 breakTimer,
                 showRemainingTime,
                 screenToggle,
                 switchToggledCallback,
                 timerToggle,
-                resetTimer
+                resetTimer,
+                stopAlarm
             } = this.props;
 
         return (
@@ -35,11 +38,6 @@ export default class MainScreen extends React.Component {
                         <Text style={styles.timerDetail}>{`Work:  ${workTimer} minutes`}</Text>
                         <Text style={styles.timerDetail}>{`Break: ${breakTimer} minutes`}</Text>
                     </View>
-                    {/* <Button
-                        text={'Edit'}
-                        callback={screenToggle}
-                        size={BUTTON_SIZES.SMALL}
-                    /> */}
                     <TouchableOpacity onPress={screenToggle}>
                         <Text>Edit</Text>
                     </TouchableOpacity>
@@ -56,36 +54,33 @@ export default class MainScreen extends React.Component {
                     {isTicking && <Text style={styles.mainText}>{isWork ? WORKING_TEXT : RESTING_TEXT}</Text>}
                     {!isTicking && <Text style={styles.mainText}>Press the button to start the clock!</Text>}
                     <View style={styles.timerContainer}>
-                        <Timer showTime={(!showRemainingTime && !isTicking) || showRemainingTime} minutes={minutes} seconds={seconds} fontSize={60}></Timer>
+                        {hasFinished && <AlarmButton callback={stopAlarm}/>}
+                        {!hasFinished && <Timer showTime={(!showRemainingTime && !isTicking) || showRemainingTime} minutes={minutes} seconds={seconds} fontSize={60} />}
                         {!showRemainingTime && <Text style={styles.noticeMessage}>If you want to see the remaining time go to the config</Text>}
                     </View>
                 </View>
-                <View style={styles.mainButtonPanel}>
-                    <View>
-                        {/* <Button
-                            text={isTicking ? 'Stop' : 'Start'}
-                            callback={timerToggle}
-                            size={BUTTON_SIZES.MEDIUM}
-                            extraStyles={styles.startButton}>
-                        </Button> */}
-                        <ImageButton
-                            imgSource={images.buttons.start}
-                            size={BUTTON_IMAGE_SIZES.MEDIUM}
-                            callback={timerToggle}
-                        />
-                    </View>
-                    <View>
-                        {/* <Button
-                            text='Reset'
-                            callback={resetTimer}
-                            size={BUTTON_SIZES.MEDIUM}>
-                        </Button> */}
-                        <ImageButton
-                            imgSource={images.buttons.reset}
-                            size={BUTTON_IMAGE_SIZES.SMALL}
-                            callback={resetTimer}
-                        />
-                    </View>
+                <View style={styles.buttonsPanelWrapper}>
+                    {!hasFinished && <View style={styles.mainButtonsPanel}>
+                        <View>
+                            {!isTicking && <ImageButton
+                                imgSource={images.buttons.start}
+                                size={BUTTON_IMAGE_SIZES.MEDIUM}
+                                callback={timerToggle}
+                            />}
+                            {isTicking && <ImageButton
+                                imgSource={images.buttons.stop}
+                                size={BUTTON_IMAGE_SIZES.MEDIUM}
+                                callback={timerToggle}
+                            />}
+                        </View>
+                        <View>
+                            <ImageButton
+                                imgSource={images.buttons.reset}
+                                size={BUTTON_IMAGE_SIZES.SMALL}
+                                callback={resetTimer}
+                            />
+                        </View>
+                    </View>}
                 </View>
             </View>
         );
@@ -97,6 +92,7 @@ MainScreen.propTypes = {
     currentTime: PropTypes.object.isRequired,
     isTicking: PropTypes.bool.isRequired,
     isWork: PropTypes.bool.isRequired,
+    hasFinished: PropTypes.bool.isRequired,
     workTimer: PropTypes.number.isRequired,
     breakTimer: PropTypes.number.isRequired,
     showRemainingTime: PropTypes.bool.isRequired,
@@ -126,11 +122,14 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: '#FFF'
     },
-    mainButtonPanel: {
+    buttonsPanelWrapper: {
         flex: 2,
-        justifyContent: 'center',
-        alignItems: 'center',
         height: 150
+    },
+    mainButtonsPanel: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     startButton: {
         marginBottom: 20

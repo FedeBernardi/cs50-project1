@@ -16,23 +16,16 @@ export default class Switch extends React.Component {
         };
     }
 
-    /**
-     * It triggers the animation and executes the sent callback
-     */
-    onSwitchToggled() {
+    render() {
+        let {textTrue, textFalse, value, callback} = this.props,
+            {leftPosition} = this.state;
+
         Animated.timing(this.state.leftPosition, {
-            toValue: this.props.value ? 115 : 0,
+            toValue: !value ? 115 : 0,
             duration: 200
         }).start();
 
-        this.props.callback();
-    }
-
-    render() {
-        let {textTrue, textFalse, value} = this.props,
-            {leftPosition} = this.state;
-
-        return <TouchableWithoutFeedback onPress={() => this.onSwitchToggled()}>
+        return <TouchableWithoutFeedback onPress={callback}>
             <View style={styles.container}>
                 <Animated.View style={[styles.selector, {left: leftPosition}]}></Animated.View>
                 <View style={styles.textContainer}>
