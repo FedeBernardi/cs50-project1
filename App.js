@@ -10,7 +10,7 @@ import { Constants } from 'expo';
 import EditScreen from './screens/EditScreen';
 import MainScreen from './screens/MainScreen';
 
-const DEFAULT_WORK_TIME = 0,
+const DEFAULT_WORK_TIME = 25,
       DEFAULT_BREAK_TIME = 5;
 
 /**

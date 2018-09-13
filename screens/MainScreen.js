@@ -1,12 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 
-import Button, {BUTTON_SIZES} from '../components/Button';
 import ImageButton, {BUTTON_IMAGE_SIZES} from '../components/ImageButton';
 import Switch from '../components/Switch';
 import Timer from '../components/Timer';
 import AlarmButton from '../components/AlarmButton';
+import Button, { BUTTON_SIZES } from '../components/Button';
 
 import images from '../utils/images';
 
@@ -38,9 +38,7 @@ export default class MainScreen extends React.Component {
                         <Text style={styles.timerDetail}>{`Work:  ${workTimer} minutes`}</Text>
                         <Text style={styles.timerDetail}>{`Break: ${breakTimer} minutes`}</Text>
                     </View>
-                    <TouchableOpacity onPress={screenToggle}>
-                        <Text>Edit</Text>
-                    </TouchableOpacity>
+                    <Button size={BUTTON_SIZES.SMALL} text='Config' callback={screenToggle} />
                 </View>
                 <View style={styles.mainContent}>
                     <View style={styles.switcher}>

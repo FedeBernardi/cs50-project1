@@ -29,10 +29,11 @@ const stylesMedium = StyleSheet.create({
         width: 200,
         height: 50,
         borderRadius: 50,
-        backgroundColor: 'red'
+        backgroundColor: '#F5BE96'
     },
     text: {
-        fontSize: 30
+        fontSize: 30,
+        color: '#291226'
     }
 });
 
@@ -43,10 +44,11 @@ const stylesSmall = StyleSheet.create({
         width: 100,
         height: 25,
         borderRadius: 50,
-        backgroundColor: 'red'
+        backgroundColor: '#F5BE96'
     },
     text: {
-        fontSize: 20
+        fontSize: 20,
+        color: '#291226'
     }
 });
 
