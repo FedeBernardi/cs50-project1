@@ -30,7 +30,7 @@ export default class App extends React.Component {
         this.state = {
             workTimer: DEFAULT_WORK_TIME,
             breakTimer: DEFAULT_BREAK_TIME,
-            currentTime: {minutes: DEFAULT_WORK_TIME, seconds: 5},
+            currentTime: {minutes: DEFAULT_WORK_TIME, seconds: 0},
             isTicking: false,
             isWork: true,
             showMainScreen: true,

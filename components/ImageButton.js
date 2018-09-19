@@ -56,7 +56,6 @@ export default class ImageButton extends React.Component {
             </View>
         </TouchableWithoutFeedback>;
     }
-
 }
 
 ImageButton.propType = {
